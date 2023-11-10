@@ -1,3 +1,6 @@
+//Show scavengerunts available.
+
+
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image, Button, TextInput, Dimensions, TouchableOpacity} from 'react-native';
 import { useState} from 'react';
@@ -29,6 +32,7 @@ export function ScavengerHunt({navigation}){
             <TouchableOpacity onPress={() => navigation.navigate("HuntDetails", {huntInfo: item.item})}>
                 <View style = {huntList.huntDisplay}>
                     <Text>{item.item.name}</Text>
+                    <Text>{item.item.active}</Text>
                 </View>
             </TouchableOpacity>
         )

@@ -13,6 +13,7 @@ import { persistStore } from "redux-persist";
 import { ActivityIndicator, Button } from "react-native";
 import { navButton } from "./Components.js";
 import { HuntDetails } from "./Views/HuntDetails.js";
+import { HuntLocation } from "./Views/HuntLocation.js";
 import { useNavigation } from "@react-navigation/native";
 import { addToken } from "./Models/userSlice.js";
 const persistor = persistStore(store);
@@ -20,6 +21,7 @@ const Stack = createNativeStackNavigator();
 function logoutButton() {
   const dispatch = useDispatch();
   const navigation = useNavigation();
+
   const handleLogout = () => {
     dispatch(addToken(0));
     navigation.reset({
@@ -27,6 +29,7 @@ function logoutButton() {
       routes: [{ name: "SplashScreen" }],
     });
   };
+
   return (
     <MaterialIcons.Button name="logout" onPress={handleLogout}>
       Logout
@@ -52,6 +55,7 @@ export default function App() {
                     }
                 />
             <Stack.Screen name="HuntDetails" component={HuntDetails} />
+            <Stack.Screen name="HuntLocation" component={HuntLocation} />
           </Stack.Navigator>
         </NavigationContainer>
       </PersistGate>
