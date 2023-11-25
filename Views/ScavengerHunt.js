@@ -8,7 +8,7 @@ import {FlatList, ImageBackground } from 'react-native';
 import {styles, huntList} from "../Styles/ScavengerHuntStyles.js";
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { postRequest } from '../Fetch.js';
+import { postRequest } from '../helpers/Fetch.js';
 
 
 

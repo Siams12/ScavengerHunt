@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import * as Styles from "../Styles/ScavengerHuntStyles.js";
 import { useDispatch, useSelector } from 'react-redux';
 import { addToken } from '../Models/userSlice.js';
-import { postRequest } from '../Fetch.js';
+import { postRequest } from '../helpers/Fetch.js';
 
 export function SplashScreen({navigation}){
     const Token = useSelector((state) => state.Users.value);

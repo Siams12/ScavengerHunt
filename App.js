@@ -14,6 +14,7 @@ import { ActivityIndicator, Button } from "react-native";
 import { navButton } from "./Components.js";
 import { HuntDetails } from "./Views/HuntDetails.js";
 import { HuntLocation } from "./Views/HuntLocation.js";
+import { LocationConditions } from "./Views/LocationConditions.js";
 import { useNavigation } from "@react-navigation/native";
 import { addToken } from "./Models/userSlice.js";
 const persistor = persistStore(store);
@@ -56,6 +57,7 @@ export default function App() {
                 />
             <Stack.Screen name="HuntDetails" component={HuntDetails} />
             <Stack.Screen name="HuntLocation" component={HuntLocation} />
+            <Stack.Screen name="LocationConditions" component={LocationConditions} />
           </Stack.Navigator>
         </NavigationContainer>
       </PersistGate>

@@ -4,7 +4,7 @@ import { useState} from 'react';
 import { useEffect } from 'react';
 import * as Styles from "../Styles/ScavengerHuntStyles.js";
 import { useDispatch, useSelector } from 'react-redux';
-import { postRequest } from '../Fetch.js';
+import { postRequest } from '../helpers/Fetch.js';
 import { addToken } from '../Models/userSlice.js';
 export function Login({navigation}){
     const dispatch = useDispatch();

@@ -1,24 +1,27 @@
 //Page represents the details for ONE HUNT
 
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image, Button, TextInput, Dimensions, Switch} from 'react-native';
+import { StyleSheet, Text, View, Image, Button, TextInput, Dimensions, Switch, Alert} from 'react-native';
 import { useState} from 'react';
 import {FlatList, ImageBackground } from 'react-native';
 import * as Styles from "../Styles/ScavengerHuntStyles.js";
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { postRequest } from '../Fetch.js';
+import { updateLocationPosition, getLocations } from '../helpers/sharedAPIS.js';
+import { postRequest } from '../helpers/Fetch.js';
 import MapView,{Marker} from "react-native-maps";
 import * as Location from "expo-location";
 
 export function HuntDetails({route, navigation}){
     const Token = useSelector((state) => state.Users.value);
     const [currentHuntName, setcurrentHuntName] = useState(route.params.huntInfo.name);
+    const huntID = route.params.huntInfo.huntid;
     const [huntName, sethuntName] = useState('');
     const [locationName, setLocationName] = useState('');
     const [message,setMessage] = useState('')
+    const [locationMessage, setLocationMessage] = useState('');
     const [locations, setLocations] = useState([]);
-    const [activeSliderValue, setActiveSliderValue] = useState(0);
+    const [activeSliderValue, setActiveSliderValue] = useState(true);
     const [location, setLocation] = useState(
         {
         latitude: 39.9937,
@@ -27,27 +30,29 @@ export function HuntDetails({route, navigation}){
         longitudeDelta: 0.005,
       });
     
-    const zoomChanges = (newRegion) => {
-        setLocation(newRegion);
-      };
+    // const zoomChanges = (newRegion) => {
+    //     console.log(zoomChanges);
+    //     setLocation(newRegion);
+    //   };
 
     //swap value of slider.
     const changeSliderValue = () => {
         if (!activeSliderValue){
-            setActiveSliderValue(1);
+            setActiveSliderValue(true);
         }
         else{
-            setActiveSliderValue(0);
+            setActiveSliderValue(false);
         }
     }
     //getHunts locations
     const getHuntLocations = async () => {
-        let result = await postRequest({token: Token, huntid: route.params.huntInfo.huntid}, "getHuntLocations.php");
-        if (result.status === "okay"){
-            setLocations(result.locations);
+        let locations = await getLocations(Token, route.params.huntInfo.huntid);
+        if (locations){
+            setLocations(locations);
+            console.log(locations);
         }
         else{
-            setMessage("Error getting hunts.")
+            console.log("error getting locations");
         }
     }
 
@@ -57,20 +62,26 @@ export function HuntDetails({route, navigation}){
 
             let fg = await Location.requestForegroundPermissionsAsync();
             if (fg.status !== 'granted') {
-                setMessage('Permission to access foreground location was denied. Please refresh and give permission');
+                setLocationMessage('Permission to access foreground location was denied. Please refresh and give permission');
                 return;
             }
             let myLocation = await Location.getCurrentPositionAsync({enableHighAccuracy: true,
                 accuracy: Location.Accuracy.Highest});
                     setLocation(myLocation);
             
-                setMessage("Location collected. Ready for encrypting")
-        })()})
+                console.log("Our current location" , location);
+                setLocationMessage("Location collected. Ready for Hunt")
+        })()}, [message])
 
     //Add a location to this hunt
     const addHuntLocation = async () => {
+        if (!location.coords){
+            setMessage("Location not collected yet. Please turn location on for app");
+            return;
+        }
         let result = await postRequest({token: Token, huntid: route.params.huntInfo.huntid, name: locationName}, "addHuntLocation.php");
         if (result.status === "okay"){
+            await updateLocationPosition(result.locationid, Token, location.coords.latitude.toString(), location.coords.longitude.toString())
             setMessage("Location added successfully")
         }
         else{
@@ -85,6 +96,7 @@ export function HuntDetails({route, navigation}){
                 index: 0,
                 routes: [{ name: "ScavengerHunt"}]
             })
+            setMessage("Delete successful")
         }
         else{
             setMessage("Delete failed")
@@ -92,7 +104,7 @@ export function HuntDetails({route, navigation}){
     }
     //Updates hunt with new name
     const updateHunt = async () => {
-        let result = await postRequest({token: Token, huntid: route.params.huntInfo.huntid, name: huntName, active: activeSliderValue}, "updateHunt.php");
+        let result = await postRequest({token: Token, huntid: route.params.huntInfo.huntid, name: huntName, active: Number(activeSliderValue)}, "updateHunt.php");
         if (result.status === "okay"){
             setcurrentHuntName(huntName);
             setMessage("Hunt updated successfully");
@@ -127,17 +139,17 @@ export function HuntDetails({route, navigation}){
             return;
         }
       };
-
+      console.log("run");
     return(
         <View>
             <MapView
             style={{ width: "100%", height: "50%" }}
             initialRegion={location}
             region={location}
-            onRegionChangeComplete={zoomChanges}
+            // onRegionChangeComplete={zoomChanges}
             >
       
-            {locations.map(location => {
+            {locations.map((location) => {
                 if (location.latitude && location.longitude){
                 return(
                 <Marker
@@ -146,14 +158,14 @@ export function HuntDetails({route, navigation}){
                     coordinate={{ latitude: location.latitude, longitude: location.longitude }}
                     title={location.name}
                     description= {location.description + location.clue}
-                    onCalloutPress={() => {navigation.navigate("huntLocation")}}
+                    onCalloutPress={() => {navigation.navigate("HuntLocation", {location: location, huntID: huntID})}}
                 />
                 )
                 }
             })}
             </MapView>
             <Text>{currentHuntName}</Text>
-
+            <Text>{locationMessage}</Text>
             <Text>{message}</Text>
             <Button title = "Delete Hunt" onPress={showConfirmDialog}/>
 
@@ -169,7 +181,7 @@ export function HuntDetails({route, navigation}){
 
             <Switch
             value={activeSliderValue}
-            onValueChange={changeSliderValue}
+            onChange={changeSliderValue}
             />
             <Button title = "Add Your current Location" onPress={addHuntLocation}/>
 

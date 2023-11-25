@@ -3,7 +3,6 @@
 export async function postRequest(formObject, path) {
     //Create formData for request
     const formData = new FormData();
-    console.log(formObject);
     try {
         for (const [key, value] of Object.entries(formObject)){
             formData.append(key, value);
