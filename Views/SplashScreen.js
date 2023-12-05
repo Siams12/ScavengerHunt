@@ -16,7 +16,7 @@ export function SplashScreen({navigation}){
           console.log("Token found going to scavengerhunt");
           navigation.reset({
             index: 0,
-            routes: [{ name: 'ScavengerHunt' }],
+            routes: [{ name: 'DefaultScreen' }],
             })
         }
         else{

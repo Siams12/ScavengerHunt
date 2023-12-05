@@ -94,7 +94,7 @@ export function HuntDetails({route, navigation}){
         if (result.status === "okay") {
             navigation.reset({
                 index: 0,
-                routes: [{ name: "ScavengerHunt"}]
+                routes: [{ name: "MakeHunt"}]
             })
             setMessage("Delete successful")
         }

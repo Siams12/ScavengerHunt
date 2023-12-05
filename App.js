@@ -15,8 +15,13 @@ import { navButton } from "./Components.js";
 import { HuntDetails } from "./Views/HuntDetails.js";
 import { HuntLocation } from "./Views/HuntLocation.js";
 import { LocationConditions } from "./Views/LocationConditions.js";
+import { HuntSearch } from "./Views/HuntSearch.js";
 import { useNavigation } from "@react-navigation/native";
 import { addToken } from "./Models/userSlice.js";
+import { DefaultScreen } from "./Views/DefaultScreen.js";
+import { HuntDetailsPlay } from "./Views/HuntDetailsPlay.js";
+import { StartHunt } from "./Views/StartHunt.js";
+import { CompletedHunts } from "./Views/completedHunts.js";
 const persistor = persistStore(store);
 const Stack = createNativeStackNavigator();
 function logoutButton() {
@@ -38,6 +43,8 @@ function logoutButton() {
   );
 }
 
+
+//TODO create an easy logout component so it shows up on every page.
 export default function App() {
   return (
     <Provider store={store}>
@@ -48,7 +55,7 @@ export default function App() {
             <Stack.Screen name="Register" component={Register} />
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen
-              name="ScavengerHunt"
+              name="MakeHunt"
               component={ScavengerHunt}
               options={{
                 headerRight: () => logoutButton()
@@ -58,6 +65,11 @@ export default function App() {
             <Stack.Screen name="HuntDetails" component={HuntDetails} />
             <Stack.Screen name="HuntLocation" component={HuntLocation} />
             <Stack.Screen name="LocationConditions" component={LocationConditions} />
+            <Stack.Screen name="HuntSearch" component={HuntSearch}/>
+            <Stack.Screen name="DefaultScreen" component={DefaultScreen}/>
+            <Stack.Screen name="HuntDetailsPlay" component={HuntDetailsPlay}/>
+            <Stack.Screen name="StartHunt" component={StartHunt}/>
+            <Stack.Screen name="CompletedHunts" component={CompletedHunts}/>
           </Stack.Navigator>
         </NavigationContainer>
       </PersistGate>
